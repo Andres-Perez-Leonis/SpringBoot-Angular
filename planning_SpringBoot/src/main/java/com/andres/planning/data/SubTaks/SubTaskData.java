@@ -5,12 +5,12 @@ import java.time.LocalDateTime;
 
 public class SubTaskData{
 
-    protected String title;
-    protected String category;
-    protected LocalDateTime dueDate;
+    private String title;
+    private String category;
+    private LocalDateTime dueDate;
 
-    protected int priority;
-    protected boolean completed;
+    private int priority;
+    private boolean completed;
 
 
     public SubTaskData(String title, String category, LocalDateTime dueDate, int priority) {
