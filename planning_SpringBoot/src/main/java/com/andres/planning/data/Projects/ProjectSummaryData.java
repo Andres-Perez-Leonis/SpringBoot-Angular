@@ -3,10 +3,14 @@ package com.andres.planning.data.Projects;
 import java.time.LocalDateTime;
 
 public class ProjectSummaryData {
-    protected String title;
-    protected String description;
-    protected LocalDateTime dueDate;
-    protected String category;
+
+    private static final Long serialVersionUID = 1L;
+
+    private Long id;
+    private String title;
+    private String description;
+    private LocalDateTime dueDate;
+    private String category;
 
     public ProjectSummaryData(String title, String description, String category, LocalDateTime dueDate) {
         this.title = title;
@@ -21,6 +25,14 @@ public class ProjectSummaryData {
         this.category = category;
     }
 
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
