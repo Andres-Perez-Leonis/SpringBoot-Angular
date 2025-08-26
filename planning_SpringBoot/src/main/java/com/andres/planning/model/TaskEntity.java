@@ -1,13 +1,10 @@
 package com.andres.planning.model;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import com.andres.planning.data.SubTaks.SubTaskData;
 
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
@@ -15,8 +12,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -24,6 +22,7 @@ import jakarta.persistence.TemporalType;
 @Entity
 @Table(name = "tasks")
 public class TaskEntity implements Serializable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -36,18 +35,27 @@ public class TaskEntity implements Serializable {
     @Nonnull
     @Column(name = "due_date")
     @Temporal(TemporalType.DATE)
-    private LocalDate dueDate;
+    private LocalDateTime dueDate;
 
     private String category;
-    
+
+
     private int priority;
 
     private String description;
 
-    private Boolean completed;
+    private Boolean completed = false;
+
+    @ManyToOne
+    @Nonnull
+    @JoinColumn(name = "project_id")
+    private ProjectEntity projectId;
 
     @OneToMany(mappedBy = "task")
     Set<SubTaskEntity> subTasks = new HashSet<>();
+
+
+    public TaskEntity() {}
 
     //Methods
 
@@ -57,20 +65,16 @@ public class TaskEntity implements Serializable {
         Boolean overlap = false;
 
         for (SubTaskEntity subTask : this.subTasks) {
-            if (other.getSubTasks().contains(subTask)) {
-                overlap = true;
-                break;
-            }
         }
         return overlap;
     }
 
-    public void addSubTask(SubTaskData subTask) {
-        this.subTasks.add(subTask);
+    public boolean addSubTask(SubTaskEntity subTask) {
+        return this.subTasks.add(subTask);
     }
 
-    public void removeSubTask(SubTaskData subTask) {
-        this.subTasks.remove(subTask);
+    public boolean removeSubTask(SubTaskEntity subTask) {
+        return this.subTasks.remove(subTask);
     }
 
 
@@ -87,15 +91,23 @@ public class TaskEntity implements Serializable {
         return title;
     }
 
+    public ProjectEntity getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(ProjectEntity projectId) {
+        this.projectId = projectId;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public LocalDate getDueDate() {
+    public LocalDateTime getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(LocalDate dueDate) {
+    public void setDueDate(LocalDateTime dueDate) {
         this.dueDate = dueDate;
     }
 
@@ -131,11 +143,11 @@ public class TaskEntity implements Serializable {
         this.completed = completed;
     }
 
-    public Set<SubTaskData> getSubTasks() {
+    public Set<SubTaskEntity> getSubTasks() {
         return subTasks;
     }
 
-    public void setSubTasks(Set<SubTaskData> subTasks) {
+    public void setSubTasks(Set<SubTaskEntity> subTasks) {
         this.subTasks = subTasks;
     }
 }
