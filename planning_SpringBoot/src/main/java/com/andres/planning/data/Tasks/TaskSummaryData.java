@@ -3,12 +3,15 @@ package com.andres.planning.data.Tasks;
 import java.time.LocalDateTime;
 
 public class TaskSummaryData {
-    protected String title;
-    protected String category;
-    protected LocalDateTime dueDate;
 
-    protected int priority;
-    protected boolean completed;
+    private static final Long serialVersionUID = 1L;
+    private Long id;
+    private String title;
+    private String category;
+    private LocalDateTime dueDate;
+
+    private int priority;
+    private boolean completed;
 
     public TaskSummaryData(String title, String category, LocalDateTime dueDate, int priority) {
         this.title = title;
@@ -18,6 +21,13 @@ public class TaskSummaryData {
         this.completed = false;
     }
 
+     public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
