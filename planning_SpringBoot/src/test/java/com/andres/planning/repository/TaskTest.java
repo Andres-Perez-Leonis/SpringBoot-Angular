@@ -127,4 +127,20 @@ public class TaskTest {
     }
 
 
+    @Test
+    @Transactional
+    public void modifyTask() {
+        LocalDateTime time = LocalDateTime.now();
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1",
+                time, time.plusHours(1), null, 1);
+        taskRepository.save(task);
+
+        task.setTitle("Updated Task 1");
+        taskRepository.save(task);
+
+        TaskEntity updatedTask = taskRepository.findById(task.getId()).orElse(null);
+        assertThat(updatedTask).isNotNull();
+        assertThat(updatedTask.getTitle()).isEqualTo("Updated Task 1");
+    }
+
 }
