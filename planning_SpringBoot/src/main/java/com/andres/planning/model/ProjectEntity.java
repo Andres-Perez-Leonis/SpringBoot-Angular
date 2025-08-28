@@ -1,6 +1,5 @@
 package com.andres.planning.model;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,6 +28,17 @@ public class ProjectEntity extends PlanningItemEntity {
         if(!containsTask(task) || !notify) return false;
 
         return this.tasks.add(task);
+    }
+
+    public boolean overlapsWith(TaskEntity other) {
+        Boolean overlap = false;
+
+        for (TaskEntity subTask : this.tasks) {
+            if(overlap = (subTask.getStartTime().isBefore(other.getFinishTime()) 
+                && subTask.getFinishTime().isAfter(other.getStartTime()))) break;
+            
+        }
+        return overlap;
     }
 
     public boolean containsTask(TaskEntity task) {
