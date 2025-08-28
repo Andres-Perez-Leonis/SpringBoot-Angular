@@ -1,48 +1,22 @@
 package com.andres.planning.model;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
-
 import jakarta.annotation.Nonnull;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "tasks")
-public class TaskEntity implements Serializable {
+public class TaskEntity extends PlanningItemEntity {
 
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Nonnull
-    private String title;
-
-    @Nonnull
-    @Column(name = "due_date")
-    @Temporal(TemporalType.DATE)
-    private LocalDateTime dueDate;
-
-    private String category;
 
 
     private int priority;
-
-    private String description;
 
     private Boolean completed = false;
 
@@ -57,6 +31,11 @@ public class TaskEntity implements Serializable {
 
     public TaskEntity() {}
 
+    public TaskEntity(String name, String description, LocalDateTime startTime, LocalDateTime finishTime, String category, int priority) {
+        super(name, description, startTime, finishTime, category);
+        this.priority = priority;
+    }
+
     //Methods
 
 
@@ -65,6 +44,9 @@ public class TaskEntity implements Serializable {
         Boolean overlap = false;
 
         for (SubTaskEntity subTask : this.subTasks) {
+            if(overlap = (subTask.getStartTime().isBefore(other.getFinishTime()) 
+                && subTask.getFinishTime().isAfter(other.getStartTime()))) break;
+            
         }
         return overlap;
     }
@@ -79,17 +61,6 @@ public class TaskEntity implements Serializable {
 
 
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
 
     public ProjectEntity getProjectId() {
         return projectId;
@@ -99,40 +70,12 @@ public class TaskEntity implements Serializable {
         this.projectId = projectId;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public LocalDateTime getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(LocalDateTime dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
     public int getPriority() {
         return priority;
     }
 
     public void setPriority(int priority) {
         this.priority = priority;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Boolean getCompleted() {
