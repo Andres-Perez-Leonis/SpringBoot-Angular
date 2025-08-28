@@ -13,6 +13,8 @@ import com.andres.planning.model.TaskEntity;
 import com.andres.planning.repository.Project.ProjectRepository;
 import com.andres.planning.repository.Task.TaskRepository;
 
+import jakarta.persistence.EntityManager;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -23,6 +25,7 @@ public class TaskTest {
     private TaskRepository taskRepository;
     private ProjectRepository projectRepository;
 
+    private EntityManager entityManager;
 
 
     @Test
@@ -158,6 +161,35 @@ public class TaskTest {
         TaskEntity completedTask = taskRepository.findById(task.getId()).orElse(null);
         assertThat(completedTask).isNotNull();
         assertThat(completedTask.getCompleted()).isTrue();
+    }
+
+
+    @Test
+    @Transactional
+    public void modifyProjectTask() {
+        LocalDateTime time = LocalDateTime.now();
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1",
+                time, time.plusHours(1), null, 1);
+        taskRepository.save(task);
+
+        ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1",
+                time, time.plusDays(7), "Category 1");
+        project.addTask(task, true);
+        projectRepository.save(project);
+
+        TaskEntity projectTask = project.getTask(task.getId());
+        projectTask.setTitle("Task 2");
+        taskRepository.save(projectTask);
+
+        // Forzar escritura y limpiar el contexto de persistencia
+        entityManager.flush();
+        entityManager.clear();
+
+        ProjectEntity updatedProjectDB = projectRepository.findById(project.getId()).orElseThrow();
+        TaskEntity updatedProjectTask = updatedProjectDB.getTask(task.getId());
+
+        assertThat(updatedProjectTask).isNotNull();
+        assertThat(updatedProjectTask.getTitle()).isEqualTo("Task 2");
     }
 
 }
