@@ -192,4 +192,18 @@ public class TaskTest {
         assertThat(updatedProjectTask.getTitle()).isEqualTo("Task 2");
     }
 
+
+    @Test
+    @Transactional
+    public void deleteTask() {
+        LocalDateTime time = LocalDateTime.now();
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1",
+                time, time.plusHours(1), null, 1);
+        taskRepository.save(task);
+
+        taskRepository.delete(task);
+
+        TaskEntity deletedTask = taskRepository.findById(task.getId()).orElse(null);
+        assertThat(deletedTask).isNull();
+    }
 }
