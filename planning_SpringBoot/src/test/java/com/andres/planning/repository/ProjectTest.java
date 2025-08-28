@@ -43,4 +43,15 @@ public class ProjectTest {
         assertThat(project.containsTask(task)).isTrue();
     }
 
+    @Test
+    public void removeTaskFromProject() {
+        LocalDateTime time = LocalDateTime.now();
+        ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", time, time.plusHours(1), null, 1);
+
+        project.addTask(task, true);
+        project.removeTask(task);
+
+        assertThat(project.containsTask(task)).isFalse();
+    }
 }
