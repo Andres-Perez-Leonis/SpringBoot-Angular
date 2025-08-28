@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
+import com.andres.planning.model.ProjectEntity;
 import com.andres.planning.model.TaskEntity;
 
 
@@ -28,6 +29,26 @@ public class TaskTest {
         assertThat(task.getFinishTime()).isEqualTo(time.plusHours(1));
         assertThat(task.getCategory()).isNull();
         assertThat(task.getPriority()).isEqualTo(1);
+    }
+
+
+    @Test
+    public void TaskAssigned() {
+        LocalDateTime time = LocalDateTime.now();
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", 
+        time, time.plusHours(1), null, 1);
+
+        ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
+
+        project.addTask(task,false); // User will be notified that task overlaps
+
+        project.addTask(task, true); // User said to ignore the overlap
+
+        task.setProjectId(project);
+
+
+        assertThat(task.getProjectId()).isEqualTo(project);
+        assertThat(project.containsTask(task)).isTrue();
     }
 
 }
