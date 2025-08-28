@@ -5,10 +5,11 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.andres.planning.model.ProjectEntity;
 import com.andres.planning.model.TaskEntity;
-
+import com.andres.planning.repository.Task.TaskRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,6 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql(scripts = "/clean-data.sql")
 public class TaskTest {
     
+    private TaskRepository taskRepository;
+
+
     @Test
     public void createTask() {
         LocalDateTime time = LocalDateTime.now();
@@ -74,5 +78,22 @@ public class TaskTest {
 
         assertThat(task1.overlapsWith(task2)).isFalse();
     }
+
+
+    @Test
+    @Transactional
+    public void saveTaskInBD() {
+        LocalDateTime time = LocalDateTime.now();
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1",
+                time, time.plusHours(1), null, 1);
+        taskRepository.save(task);
+
+        assertThat(task.getId()).isNotNull();
+
+        TaskEntity taskBD = taskRepository.findById(task.getId()).orElse(null);
+        assertThat(taskBD).isNotNull();
+        assertThat(taskBD.getTitle()).isEqualTo("Task 1");
+    }
+
 
 }
