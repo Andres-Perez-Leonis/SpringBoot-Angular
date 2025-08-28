@@ -3,6 +3,9 @@ package com.andres.planning.model;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.andres.planning.model.OverlapResult.OverlapResult;
+
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -41,24 +44,31 @@ public class TaskEntity extends PlanningItemEntity {
 
 
 
-    public boolean overlapsWith(SubTaskEntity other) {
-        Boolean overlap = false;
+    public OverlapResult overlapsWith(SubTaskEntity other) {
+
+        OverlapResult result = new OverlapResult(false);
 
         for (SubTaskEntity subTask : this.subTasks) {
-            if(overlap = (subTask.getStartTime().isBefore(other.getFinishTime()) 
-                && subTask.getFinishTime().isAfter(other.getStartTime()))) break;
-            
+            if (subTask.getStartTime().isBefore(other.getFinishTime())
+                    && subTask.getFinishTime().isAfter(other.getStartTime())) {
+                result.setOverlap(true);
+                result.addOverlap(subTask);
+            }
         }
-        return overlap;
+        return result;
     }
 
-    public boolean addSubTask(SubTaskEntity subTask, boolean notifyUser) {
-        if (notifyUser && overlapsWith(subTask)) {
+    public OverlapResult addSubTask(SubTaskEntity subTask, boolean notifyUser) {
+
+        OverlapResult overlapResult = overlapsWith(subTask);
+        if (overlapResult.isOverlap() && notifyUser) {
             // Notify user about overlap
-            return false;
+            return overlapResult;
         }
+
         subTask.setTaskID(this.getId());
-        return this.subTasks.add(subTask);
+        this.subTasks.add(subTask);
+        return overlapResult;
     }
 
     public boolean removeSubTask(SubTaskEntity subTask) {
