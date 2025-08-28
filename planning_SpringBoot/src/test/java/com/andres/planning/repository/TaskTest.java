@@ -143,4 +143,21 @@ public class TaskTest {
         assertThat(updatedTask.getTitle()).isEqualTo("Updated Task 1");
     }
 
+
+    @Test
+    @Transactional
+    public void completeTask() {
+        LocalDateTime time = LocalDateTime.now();
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1",
+                time, time.plusHours(1), null, 1);
+        taskRepository.save(task);
+
+        task.setCompleted(true);
+        taskRepository.save(task);
+
+        TaskEntity completedTask = taskRepository.findById(task.getId()).orElse(null);
+        assertThat(completedTask).isNotNull();
+        assertThat(completedTask.getCompleted()).isTrue();
+    }
+
 }
