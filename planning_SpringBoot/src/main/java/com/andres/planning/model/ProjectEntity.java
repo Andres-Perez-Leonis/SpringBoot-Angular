@@ -4,6 +4,10 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.scheduling.config.Task;
+
+import com.andres.planning.model.OverlapResult.OverlapResult;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -24,21 +28,29 @@ public class ProjectEntity extends PlanningItemEntity {
     public ProjectEntity() {}
 
 
-    public boolean addTask(TaskEntity task, boolean notify) {
-        if(!containsTask(task) || !notify) return false;
+    public OverlapResult addTask(TaskEntity task, boolean notify) {
+        OverlapResult overlapResult = overlapsWith(task);
+        if (overlapResult.isOverlap() && notify) {
+            // Notify user about overlap
+            return overlapResult;
+        }
 
-        return this.tasks.add(task);
+        task.setProjectId(this.getId());
+        this.tasks.add(task);
+        return overlapResult;
     }
 
-    public boolean overlapsWith(TaskEntity other) {
-        Boolean overlap = false;
+    public OverlapResult overlapsWith(TaskEntity other) {
+        OverlapResult result = new OverlapResult(false);
 
-        for (TaskEntity subTask : this.tasks) {
-            if(overlap = (subTask.getStartTime().isBefore(other.getFinishTime()) 
-                && subTask.getFinishTime().isAfter(other.getStartTime()))) break;
-            
+        for (TaskEntity task : this.tasks) {
+            if (task.getStartTime().isBefore(other.getFinishTime())
+                    && task.getFinishTime().isAfter(other.getStartTime())) {
+                result.setOverlap(true);
+                result.addOverlap(task);
+            }
         }
-        return overlap;
+        return result;
     }
 
     public boolean containsTask(TaskEntity task) {
