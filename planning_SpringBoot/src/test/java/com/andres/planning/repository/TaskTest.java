@@ -2,6 +2,7 @@ package com.andres.planning.repository;
 
 import java.time.LocalDateTime;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.repository.CrudRepository;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.andres.planning.model.ProjectEntity;
 import com.andres.planning.model.SubTaskEntity;
 import com.andres.planning.model.TaskEntity;
+import com.andres.planning.model.OverlapResult.OverlapResult;
 import com.andres.planning.repository.Project.ProjectRepository;
 import com.andres.planning.repository.SubTask.SubTaskRepository;
 import com.andres.planning.repository.Task.TaskRepository;
@@ -75,15 +77,17 @@ public class TaskTest {
         SubTaskEntity subTask1 = new SubTaskEntity("SubTask 1", "Description for SubTask 1", false, 1,
                 time, time.plusMinutes(30));
         SubTaskEntity subTask2 = new SubTaskEntity("SubTask 2", "Description for SubTask 2", false, 2,
-                time.plusMinutes(30), time.plusHours(1));
+                time, time.plusHours(1));
 
-        task1.addSubTask(subTask1, false); // No overlap
+        OverlapResult overlapResult = task1.addSubTask(subTask1, false); // No overlap
+        assertThat(overlapResult.isOverlap()).isFalse();
+        assertThat(task1.getSubTasks()).contains(subTask1);
+        
+        overlapResult = task1.addSubTask(subTask2, false); // Overlap
+        assertThat(overlapResult.isOverlap()).isTrue();
+        assertThat(overlapResult.getConflictingTasks()).contains(subTask1);
 
-        boolean notify = false;
-        boolean overlap = task1.addSubTask(subTask2, false); // Overlap
-        if(overlap) notify = true; // User notified about overlap
-        assertThat(notify).isTrue();
-        task1.addSubTask(subTask2, notify); // ignore overlap
+        task1.addSubTask(subTask2, true); // ignore overlap
         assertThat(task1.getSubTasks()).contains(subTask1, subTask2);
     }
 
@@ -99,12 +103,13 @@ public class TaskTest {
         SubTaskEntity subTask2 = new SubTaskEntity("SubTask 2", "Description for SubTask 2", false, 2,
                 time.plusMinutes(30), time.plusHours(1));
 
-        task1.addSubTask(subTask1, false); // No overlap
+        OverlapResult overlapResult = task1.addSubTask(subTask1, false); // No Overlap
 
-        boolean notify = false;
-        boolean overlap = task1.addSubTask(subTask2, false); // No Overlap
-        if(overlap) notify = true; // User notified about overlap
-        assertThat(notify).isFalse(); // No notification should be sent
+        assertThat(overlapResult.isOverlap()).isFalse();
+        assertThat(task1.getSubTasks()).contains(subTask1);
+
+        overlapResult = task1.addSubTask(subTask2, false); // No Overlap
+        assertThat(overlapResult.isOverlap()).isFalse();
         assertThat(task1.getSubTasks()).contains(subTask1, subTask2);
     }
 
