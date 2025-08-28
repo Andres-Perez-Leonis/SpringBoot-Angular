@@ -9,8 +9,10 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.andres.planning.model.ProjectEntity;
+import com.andres.planning.model.SubTaskEntity;
 import com.andres.planning.model.TaskEntity;
 import com.andres.planning.repository.Project.ProjectRepository;
+import com.andres.planning.repository.SubTask.SubTaskRepository;
 import com.andres.planning.repository.Task.TaskRepository;
 
 import jakarta.persistence.EntityManager;
@@ -26,6 +28,7 @@ public class TaskTest {
     private ProjectRepository projectRepository;
 
     private EntityManager entityManager;
+    private SubTaskRepository subTaskRepository;
 
 
     @Test
@@ -55,10 +58,9 @@ public class TaskTest {
 
         project.addTask(task, true); // User said to ignore the overlap
 
-        task.setProjectId(project);
+        task.setProjectId(project.getId());
 
-
-        assertThat(task.getProjectId()).isEqualTo(project);
+        assertThat(task.getProjectId()).isEqualTo(project.getId());
         assertThat(project.containsTask(task)).isTrue();
     }
 
@@ -113,7 +115,7 @@ public class TaskTest {
 
         project.addTask(task, true); // User said to ignore the overlap
 
-        task.setProjectId(project);
+        task.setProjectId(project.getId());
 
 
         projectRepository.save(project);
@@ -206,4 +208,55 @@ public class TaskTest {
         TaskEntity deletedTask = taskRepository.findById(task.getId()).orElse(null);
         assertThat(deletedTask).isNull();
     }
+
+    @Test
+    @Transactional
+    public void addSubTask() {
+        LocalDateTime time = LocalDateTime.now();
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1",
+                time, time.plusHours(1), null, 1);
+        taskRepository.save(task);
+
+        SubTaskEntity subTask = new SubTaskEntity("SubTask 1", "Description for SubTask 1", false, 1,
+                time, time.plusHours(1));
+        subTaskRepository.save(subTask);
+
+        task.addSubTask(subTask, true);
+        subTask.setTaskID(task.getId());
+
+        assertThat(subTask.getTaskID()).isEqualTo(task);
+        assertThat(task.getSubTasks()).contains(subTask);
+
+    }
+
+    @Test
+    @Transactional
+    public void deleteSubTask() {
+        LocalDateTime time = LocalDateTime.now();
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1",
+                time, time.plusHours(1), null, 1);
+        taskRepository.save(task);
+
+        SubTaskEntity subTask = new SubTaskEntity("SubTask 1", "Description for SubTask 1", false, 1,
+                time, time.plusHours(1));
+        subTask.setTaskID(task.getId());
+        subTaskRepository.save(subTask);
+
+        // Verificamos que existe
+        assertThat(subTaskRepository.findById(subTask.getId())).isPresent();
+
+        // Eliminamos
+        subTaskRepository.delete(subTask);
+        task.removeSubTask(subTask);
+
+        // Forzamos escritura y recargamos
+        entityManager.flush();
+        entityManager.clear();
+
+        // Verificamos que ya no existe en la BD
+        assertThat(subTaskRepository.findById(subTask.getId())).isNotPresent();
+
+        assertThat(task.getSubTasks()).doesNotContain(subTask);
+    }
+    
 }
