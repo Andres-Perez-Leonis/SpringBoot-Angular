@@ -4,11 +4,13 @@ import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.andres.planning.model.ProjectEntity;
 import com.andres.planning.model.TaskEntity;
+import com.andres.planning.repository.Project.ProjectRepository;
 import com.andres.planning.repository.Task.TaskRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,6 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TaskTest {
     
     private TaskRepository taskRepository;
+    private ProjectRepository projectRepository;
+
 
 
     @Test
@@ -93,6 +97,33 @@ public class TaskTest {
         TaskEntity taskBD = taskRepository.findById(task.getId()).orElse(null);
         assertThat(taskBD).isNotNull();
         assertThat(taskBD.getTitle()).isEqualTo("Task 1");
+    }
+
+    @Test
+    @Transactional
+    public void saveTaskWithProject() {
+        LocalDateTime time = LocalDateTime.now();
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1",
+                time, time.plusHours(1), null, 1);
+
+        ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
+
+        project.addTask(task, true); // User said to ignore the overlap
+
+        task.setProjectId(project);
+
+
+        projectRepository.save(project);
+        taskRepository.save(task);
+
+        assertThat(task.getId()).isNotNull();
+        assertThat(project.getId()).isNotNull();
+
+        TaskEntity taskBD = taskRepository.findById(task.getId()).orElse(null);
+        assertThat(taskBD).isNotNull();
+        assertThat(taskBD.getTitle()).isEqualTo("Task 1");
+        assertThat(taskBD.getProjectId()).isEqualTo(project);
+        assertThat(project.containsTask(taskBD)).isTrue();
     }
 
 
