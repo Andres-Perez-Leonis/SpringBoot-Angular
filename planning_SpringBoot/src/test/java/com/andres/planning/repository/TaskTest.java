@@ -18,6 +18,7 @@ import com.andres.planning.repository.Task.TaskRepository;
 import jakarta.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 @SpringBootTest
@@ -70,10 +71,20 @@ public class TaskTest {
         LocalDateTime time = LocalDateTime.now();
         TaskEntity task1 = new TaskEntity("Task 1", "Description for Task 1",
                 time, time.plusHours(1), null, 1);
-        TaskEntity task2 = new TaskEntity("Task 2", "Description for Task 2",
-                time.plusMinutes(30), time.plusHours(2), null, 2);
 
-        assertThat(task1.overlapsWith(task2)).isTrue();
+        SubTaskEntity subTask1 = new SubTaskEntity("SubTask 1", "Description for SubTask 1", false, 1,
+                time, time.plusMinutes(30));
+        SubTaskEntity subTask2 = new SubTaskEntity("SubTask 2", "Description for SubTask 2", false, 2,
+                time.plusMinutes(30), time.plusHours(1));
+
+        task1.addSubTask(subTask1, false); // No overlap
+
+        boolean notify = false;
+        boolean overlap = task1.addSubTask(subTask2, false); // Overlap
+        if(overlap) notify = true; // User notified about overlap
+        assertThat(notify).isTrue();
+        task1.addSubTask(subTask2, notify); // ignore overlap
+        assertThat(task1.getSubTasks()).contains(subTask1, subTask2);
     }
 
 
@@ -82,10 +93,19 @@ public class TaskTest {
         LocalDateTime time = LocalDateTime.now();
         TaskEntity task1 = new TaskEntity("Task 1", "Description for Task 1",
                 time, time.plusHours(1), null, 1);
-        TaskEntity task2 = new TaskEntity("Task 2", "Description for Task 2",
-                time.plusHours(1), time.plusHours(2), null, 2);
 
-        assertThat(task1.overlapsWith(task2)).isFalse();
+        SubTaskEntity subTask1 = new SubTaskEntity("SubTask 1", "Description for SubTask 1", false, 1,
+                time, time.plusMinutes(30));
+        SubTaskEntity subTask2 = new SubTaskEntity("SubTask 2", "Description for SubTask 2", false, 2,
+                time.plusMinutes(30), time.plusHours(1));
+
+        task1.addSubTask(subTask1, false); // No overlap
+
+        boolean notify = false;
+        boolean overlap = task1.addSubTask(subTask2, false); // No Overlap
+        if(overlap) notify = true; // User notified about overlap
+        assertThat(notify).isFalse(); // No notification should be sent
+        assertThat(task1.getSubTasks()).contains(subTask1, subTask2);
     }
 
 
