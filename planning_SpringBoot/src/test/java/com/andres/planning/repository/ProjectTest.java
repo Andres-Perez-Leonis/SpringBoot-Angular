@@ -8,6 +8,7 @@ import org.springframework.scheduling.config.Task;
 import org.springframework.test.context.jdbc.Sql;
 
 import com.andres.planning.model.ProjectEntity;
+import com.andres.planning.model.TaskEntity;
 import com.andres.planning.repository.Project.ProjectRepository;
 import com.andres.planning.repository.Task.TaskRepository;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,5 +32,15 @@ public class ProjectTest {
         assertThat(project.getCategory()).isEqualTo("Category 1");
     }
 
+    @Test
+    public void addTaskToProject() {
+        LocalDateTime time = LocalDateTime.now();
+        ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", time, time.plusHours(1), null, 1);
+
+        project.addTask(task, true);
+
+        assertThat(project.containsTask(task)).isTrue();
+    }
 
 }
