@@ -23,7 +23,7 @@ public class SubTaskEntity extends TaskEntity{
     @ManyToOne
     @JoinColumn(name = "task_id")
     @NonNull
-    private TaskEntity taskID;
+    private Long taskID;
 
     public SubTaskEntity() {}
 
@@ -35,11 +35,11 @@ public class SubTaskEntity extends TaskEntity{
     // Getters and Setters
 
 
-    public TaskEntity getTaskID() {
+    public Long getTaskID() {
         return taskID;
     }
 
-    public void setTaskID(TaskEntity taskID) {
+    public void setTaskID(Long taskID) {
         this.taskID = taskID;
     }
 
