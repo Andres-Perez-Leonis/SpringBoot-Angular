@@ -63,4 +63,16 @@ public class TaskTest {
         assertThat(task1.overlapsWith(task2)).isTrue();
     }
 
+
+    @Test
+    public void checkTaskNoOverlap() {
+        LocalDateTime time = LocalDateTime.now();
+        TaskEntity task1 = new TaskEntity("Task 1", "Description for Task 1",
+                time, time.plusHours(1), null, 1);
+        TaskEntity task2 = new TaskEntity("Task 2", "Description for Task 2",
+                time.plusHours(1), time.plusHours(2), null, 2);
+
+        assertThat(task1.overlapsWith(task2)).isFalse();
+    }
+
 }
