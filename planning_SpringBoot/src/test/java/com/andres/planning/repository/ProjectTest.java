@@ -9,6 +9,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import com.andres.planning.model.ProjectEntity;
 import com.andres.planning.model.TaskEntity;
+import com.andres.planning.model.OverlapResult.OverlapResult;
 import com.andres.planning.repository.Project.ProjectRepository;
 import com.andres.planning.repository.Task.TaskRepository;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,4 +55,26 @@ public class ProjectTest {
 
         assertThat(project.containsTask(task)).isFalse();
     }
+
+    @Test
+    public void updateProjectDetails() {
+        LocalDateTime time = LocalDateTime.now();
+        ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
+        projectRepository.save(project);
+
+        project.setTitle("Updated Project 1");
+        project.setDescription("Updated Description for Project 1");
+        project.setCategory("Updated Category 1");
+        projectRepository.save(project);
+
+        ProjectEntity updatedProject = projectRepository.findById(project.getId()).orElse(null);
+        assertThat(updatedProject).isNotNull();
+        assertThat(updatedProject.getTitle()).isEqualTo("Updated Project 1");
+        assertThat(updatedProject.getDescription()).isEqualTo("Updated Description for Project 1");
+        assertThat(updatedProject.getCategory()).isEqualTo("Updated Category 1");
+    }
+
+
+
+    
 }
