@@ -37,7 +37,7 @@ public class TaskTest {
     @Test
     public void createTask() {
         LocalDateTime time = LocalDateTime.now();
-        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", 
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", false,
         time, time.plusHours(1), null, 1);
 
         assertThat(task.getTitle()).isEqualTo("Task 1");
@@ -52,7 +52,7 @@ public class TaskTest {
     @Test
     public void TaskAssigned() {
         LocalDateTime time = LocalDateTime.now();
-        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", 
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", false,
         time, time.plusHours(1), null, 1);
 
         ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
@@ -71,7 +71,7 @@ public class TaskTest {
     @Test
     public void checkTaskOverlap() {
         LocalDateTime time = LocalDateTime.now();
-        TaskEntity task1 = new TaskEntity("Task 1", "Description for Task 1",
+        TaskEntity task1 = new TaskEntity("Task 1", "Description for Task 1", false,
                 time, time.plusHours(1), null, 1);
 
         SubTaskEntity subTask1 = new SubTaskEntity("SubTask 1", "Description for SubTask 1", false, 1,
@@ -96,7 +96,7 @@ public class TaskTest {
     public void checkTaskNoOverlap() {
         LocalDateTime time = LocalDateTime.now();
         TaskEntity task1 = new TaskEntity("Task 1", "Description for Task 1",
-                time, time.plusHours(1), null, 1);
+                false, time, time.plusHours(1), null, 1);
 
         SubTaskEntity subTask1 = new SubTaskEntity("SubTask 1", "Description for SubTask 1", false, 1,
                 time, time.plusMinutes(30));
@@ -118,7 +118,7 @@ public class TaskTest {
     @Transactional
     public void saveTaskInBD() {
         LocalDateTime time = LocalDateTime.now();
-        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1",
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", false,
                 time, time.plusHours(1), null, 1);
         taskRepository.save(task);
 
@@ -133,7 +133,7 @@ public class TaskTest {
     @Transactional
     public void saveTaskWithProject() {
         LocalDateTime time = LocalDateTime.now();
-        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1",
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", false,
                 time, time.plusHours(1), null, 1);
 
         ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
@@ -161,7 +161,7 @@ public class TaskTest {
     @Transactional
     public void modifyTask() {
         LocalDateTime time = LocalDateTime.now();
-        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1",
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", false,
                 time, time.plusHours(1), null, 1);
         taskRepository.save(task);
 
@@ -178,7 +178,7 @@ public class TaskTest {
     @Transactional
     public void completeTask() {
         LocalDateTime time = LocalDateTime.now();
-        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1",
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", false,
                 time, time.plusHours(1), null, 1);
         taskRepository.save(task);
 
@@ -195,7 +195,7 @@ public class TaskTest {
     @Transactional
     public void modifyProjectTask() {
         LocalDateTime time = LocalDateTime.now();
-        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1",
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", false,
                 time, time.plusHours(1), null, 1);
         taskRepository.save(task);
 
@@ -224,7 +224,7 @@ public class TaskTest {
     @Transactional
     public void deleteTask() {
         LocalDateTime time = LocalDateTime.now();
-        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1",
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", false,
                 time, time.plusHours(1), null, 1);
         taskRepository.save(task);
 
@@ -238,7 +238,7 @@ public class TaskTest {
     @Transactional
     public void addSubTask() {
         LocalDateTime time = LocalDateTime.now();
-        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1",
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", false,
                 time, time.plusHours(1), null, 1);
         taskRepository.save(task);
 
@@ -258,7 +258,7 @@ public class TaskTest {
     @Transactional
     public void deleteSubTask() {
         LocalDateTime time = LocalDateTime.now();
-        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1",
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", false,
                 time, time.plusHours(1), null, 1);
         taskRepository.save(task);
 
