@@ -159,4 +159,21 @@ public class ProjectTest {
         ProjectEntity deletedProject = projectRepository.findById(project.getId()).orElse(null);
         assertThat(deletedProject).isNull();
     }
+
+    @Test
+    @Transactional
+    public void addTaskToProjectDB() {
+        LocalDateTime time = LocalDateTime.now();
+        ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", time, time.plusHours(1), null, 1);
+        project.addTask(task, true);
+        projectRepository.save(project);
+        taskRepository.save(task);
+
+        ProjectEntity savedProject = projectRepository.findById(project.getId()).orElse(null);
+        assertThat(savedProject).isNotNull();
+        assertThat(savedProject.containsTask(task)).isTrue();
+    }
+
+    
 }
