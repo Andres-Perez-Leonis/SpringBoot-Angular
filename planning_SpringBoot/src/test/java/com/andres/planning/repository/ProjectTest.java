@@ -175,5 +175,22 @@ public class ProjectTest {
         assertThat(savedProject.containsTask(task)).isTrue();
     }
 
-    
+    @Test
+    @Transactional
+    public void deleteTaskFromProjectDB() {
+        LocalDateTime time = LocalDateTime.now();
+        ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", time, time.plusHours(1), null, 1);
+        project.addTask(task, true);
+        projectRepository.save(project);
+        taskRepository.save(task);
+
+        project.removeTask(task);
+        projectRepository.save(project);
+        taskRepository.delete(task);
+
+        ProjectEntity savedProject = projectRepository.findById(project.getId()).orElse(null);
+        assertThat(savedProject).isNotNull();
+        assertThat(savedProject.containsTask(task)).isFalse();
+    }
 }
