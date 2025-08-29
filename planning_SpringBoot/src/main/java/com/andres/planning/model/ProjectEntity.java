@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.scheduling.config.Task;
 
 import com.andres.planning.model.OverlapResult.OverlapResult;
 
@@ -35,7 +34,7 @@ public class ProjectEntity extends PlanningItemEntity {
             return overlapResult;
         }
 
-        task.setProjectId(this.getId());
+        task.setProject(this);
         this.tasks.add(task);
         return overlapResult;
     }
