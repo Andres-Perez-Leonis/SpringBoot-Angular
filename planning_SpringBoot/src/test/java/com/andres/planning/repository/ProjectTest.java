@@ -12,6 +12,9 @@ import com.andres.planning.model.TaskEntity;
 import com.andres.planning.model.OverlapResult.OverlapResult;
 import com.andres.planning.repository.Project.ProjectRepository;
 import com.andres.planning.repository.Task.TaskRepository;
+
+import jakarta.transaction.Transactional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -111,6 +114,19 @@ public class ProjectTest {
         assertThat(project.getTasks()).contains(task1, task2);
     }
 
-    
+    @Test
+    @Transactional
+    public void saveProjectDB() {
+        LocalDateTime time = LocalDateTime.now();
+        ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
+        projectRepository.save(project);
+
+        ProjectEntity savedProject = projectRepository.findById(project.getId()).orElse(null);
+        assertThat(savedProject).isNotNull();
+        assertThat(savedProject.getTitle()).isEqualTo("Project 1");
+        assertThat(savedProject.getDescription()).isEqualTo("Description for Project 1");
+        assertThat(savedProject.getCategory()).isEqualTo("Category 1");
+    }
+
 
 }
