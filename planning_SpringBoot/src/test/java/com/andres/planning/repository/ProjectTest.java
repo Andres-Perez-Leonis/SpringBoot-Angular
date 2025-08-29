@@ -81,8 +81,8 @@ public class ProjectTest {
     public void checkOverlapTask() {
         LocalDateTime time = LocalDateTime.now();
         ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
-        TaskEntity task1 = new TaskEntity("Task 1", "Description for Task 1", time, time.plusHours(1), null, 1);
-        TaskEntity task2 = new TaskEntity("Task 2", "Description for Task 2", time.plusMinutes(30), time.plusHours(2), null, 1);
+        TaskEntity task1 = new TaskEntity("Task 1", "Description for Task 1", false, time, time.plusHours(1), null, 1);
+        TaskEntity task2 = new TaskEntity("Task 2", "Description for Task 2", false, time.plusMinutes(30), time.plusHours(2), null, 1);
 
         OverlapResult overlapResult = project.addTask(task1, false);
         assertThat(overlapResult.isOverlap()).isFalse();
@@ -102,8 +102,8 @@ public class ProjectTest {
     public void checkNoOverlapTask() {
         LocalDateTime time = LocalDateTime.now();
         ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
-        TaskEntity task1 = new TaskEntity("Task 1", "Description for Task 1", time, time.plusHours(1), null, 1);
-        TaskEntity task2 = new TaskEntity("Task 2", "Description for Task 2", time.plusHours(1), time.plusHours(2), null, 1);
+        TaskEntity task1 = new TaskEntity("Task 1", "Description for Task 1", false, time, time.plusHours(1), null, 1);
+        TaskEntity task2 = new TaskEntity("Task 2", "Description for Task 2", false, time.plusHours(1), time.plusHours(2), null, 1);
 
         OverlapResult overlapResult = project.addTask(task1, false);
         assertThat(overlapResult.isOverlap()).isFalse();
@@ -165,7 +165,7 @@ public class ProjectTest {
     public void addTaskToProjectDB() {
         LocalDateTime time = LocalDateTime.now();
         ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
-        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", time, time.plusHours(1), null, 1);
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", false, time, time.plusHours(1), null, 1);
         project.addTask(task, true);
         projectRepository.save(project);
         taskRepository.save(task);
@@ -180,7 +180,7 @@ public class ProjectTest {
     public void deleteTaskFromProjectDB() {
         LocalDateTime time = LocalDateTime.now();
         ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
-        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", time, time.plusHours(1), null, 1);
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", false, time, time.plusHours(1), null, 1);
         project.addTask(task, true);
         projectRepository.save(project);
         taskRepository.save(task);

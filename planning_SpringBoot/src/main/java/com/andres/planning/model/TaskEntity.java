@@ -37,7 +37,7 @@ public class TaskEntity extends PlanningItemEntity {
 
     public TaskEntity() {}
 
-    public TaskEntity(@NonNull String name, String description, Boolean completed, @Nonnull LocalDateTime startTime, @Nonnull LocalDateTime finishTime, String category, int priority) {
+    public TaskEntity(@NonNull String name, String description,@NonNull Boolean completed, @Nonnull LocalDateTime startTime, @Nonnull LocalDateTime finishTime, String category, int priority) {
         super(name, description, startTime, finishTime, category);
         this.priority = priority;
         this.completed = completed != null ? completed : false;

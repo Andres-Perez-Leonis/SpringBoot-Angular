@@ -29,7 +29,7 @@ public class SubTaskEntity extends TaskEntity{
 
     public SubTaskEntity(@NonNull String title, String description, @NonNull Boolean completed,
             @NonNull int priority, @NonNull LocalDateTime startTime, @NonNull LocalDateTime finishTime) {
-        super(title, description, startTime, finishTime, null, priority);
+        super(title, description, completed, startTime, finishTime, null, priority);
     }
 
     // Getters and Setters
