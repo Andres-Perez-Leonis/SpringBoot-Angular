@@ -27,4 +27,18 @@ public class SubTaskTest {
         assertThat(subTask.getStartTime()).isNotNull();
         assertThat(subTask.getFinishTime()).isNotNull();
     }
+
+    @Test
+    public void updateSubTask() {
+        SubTaskEntity subTask = new SubTaskEntity("SubTask 1", "Description for SubTask 1", false, 1,
+                LocalDateTime.now(), LocalDateTime.now().plusMinutes(30));
+        subTask.setTitle("Updated SubTask 1");
+        subTask.setDescription("Updated Description for SubTask 1");
+
+        assertThat(subTask.getId()).isNotNull();
+        assertThat(subTask.getTitle()).isEqualTo("Updated SubTask 1");
+        assertThat(subTask.getDescription()).isEqualTo("Updated Description for SubTask 1");
+        assertThat(subTask.getStartTime()).isNotNull();
+        assertThat(subTask.getFinishTime()).isNotNull();
+    }
 }
