@@ -2,10 +2,10 @@ package com.andres.planning.repository;
 
 import java.time.LocalDateTime;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,17 +20,23 @@ import com.andres.planning.repository.Task.TaskRepository;
 import jakarta.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 
 
 @SpringBootTest
 @Sql(scripts = "/clean-data.sql")
+@ActiveProfiles("test")
 public class TaskTest {
     
+        @Autowired
     private TaskRepository taskRepository;
+
+    @Autowired
     private ProjectRepository projectRepository;
 
+    @Autowired
     private EntityManager entityManager;
+
+    @Autowired
     private SubTaskRepository subTaskRepository;
 
 
@@ -61,9 +67,9 @@ public class TaskTest {
 
         project.addTask(task, true); // User said to ignore the overlap
 
-        task.setProjectId(project.getId());
+        task.setProject(project);
 
-        assertThat(task.getProjectId()).isEqualTo(project.getId());
+        assertThat(task.getProject()).isEqualTo(project);
         assertThat(project.containsTask(task)).isTrue();
     }
 
@@ -140,8 +146,7 @@ public class TaskTest {
 
         project.addTask(task, true); // User said to ignore the overlap
 
-        task.setProjectId(project.getId());
-
+        task.setProject(project);
 
         projectRepository.save(project);
         taskRepository.save(task);
@@ -152,7 +157,7 @@ public class TaskTest {
         TaskEntity taskBD = taskRepository.findById(task.getId()).orElse(null);
         assertThat(taskBD).isNotNull();
         assertThat(taskBD.getTitle()).isEqualTo("Task 1");
-        assertThat(taskBD.getProjectId()).isEqualTo(project);
+        assertThat(taskBD.getProject()).isEqualTo(project);
         assertThat(project.containsTask(taskBD)).isTrue();
     }
 
@@ -247,9 +252,9 @@ public class TaskTest {
         subTaskRepository.save(subTask);
 
         task.addSubTask(subTask, true);
-        subTask.setTaskID(task.getId());
+        subTask.setTask(task);
 
-        assertThat(subTask.getTaskID()).isEqualTo(task);
+        assertThat(subTask.getTask()).isEqualTo(task);
         assertThat(task.getSubTasks()).contains(subTask);
 
     }
@@ -264,7 +269,7 @@ public class TaskTest {
 
         SubTaskEntity subTask = new SubTaskEntity("SubTask 1", "Description for SubTask 1", false, 1,
                 time, time.plusHours(1));
-        subTask.setTaskID(task.getId());
+        subTask.setTask(task);
         subTaskRepository.save(subTask);
 
         // Verificamos que existe
