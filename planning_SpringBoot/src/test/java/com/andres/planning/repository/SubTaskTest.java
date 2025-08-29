@@ -41,4 +41,13 @@ public class SubTaskTest {
         assertThat(subTask.getStartTime()).isNotNull();
         assertThat(subTask.getFinishTime()).isNotNull();
     }
+
+    @Test
+    public void deleteSubTask() {
+        SubTaskEntity subTask = new SubTaskEntity("SubTask 1", "Description for SubTask 1", false, 1,
+                LocalDateTime.now(), LocalDateTime.now().plusMinutes(30));
+        subTaskRepository.save(subTask);
+        subTaskRepository.delete(subTask);
+        assertThat(subTaskRepository.findById(subTask.getId())).isEmpty();
+    }
 }
