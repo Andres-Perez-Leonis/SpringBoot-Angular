@@ -20,7 +20,7 @@ import jakarta.transaction.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@Sql(scripts = "/clean-data.sql")
+@Sql(scripts = "./../../resources/clean-data.sql")
 @ActiveProfiles("test")
 public class ProjectTest {
 
