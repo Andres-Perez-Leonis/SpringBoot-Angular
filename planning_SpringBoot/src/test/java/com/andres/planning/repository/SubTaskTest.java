@@ -11,6 +11,8 @@ import org.springframework.test.context.jdbc.Sql;
 import com.andres.planning.model.SubTaskEntity;
 import com.andres.planning.repository.SubTask.SubTaskRepository;
 
+import jakarta.transaction.Transactional;
+
 @SpringBootTest
 @Sql(scripts = "/clean-data.sql")
 public class SubTaskTest {
@@ -49,5 +51,15 @@ public class SubTaskTest {
         subTaskRepository.save(subTask);
         subTaskRepository.delete(subTask);
         assertThat(subTaskRepository.findById(subTask.getId())).isEmpty();
+    }
+
+    @Test
+    @Transactional
+    public void findSubTaskById() {
+        SubTaskEntity subTask = new SubTaskEntity("SubTask 1", "Description for SubTask 1", false, 1,
+                LocalDateTime.now(), LocalDateTime.now().plusMinutes(30));
+        subTaskRepository.save(subTask);
+        assertThat(subTaskRepository.findById(subTask.getId())).isPresent();
+        assertThat(subTaskRepository.findById(subTask.getId()).get().getTitle()).isEqualTo("SubTask 1");
     }
 }
