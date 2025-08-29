@@ -94,5 +94,23 @@ public class ProjectTest {
         assertThat(project.getTasks()).contains(task1, task2);
 
     }
+
+    @Test
+    public void checkNoOverlapTask() {
+        LocalDateTime time = LocalDateTime.now();
+        ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
+        TaskEntity task1 = new TaskEntity("Task 1", "Description for Task 1", time, time.plusHours(1), null, 1);
+        TaskEntity task2 = new TaskEntity("Task 2", "Description for Task 2", time.plusHours(1), time.plusHours(2), null, 1);
+
+        OverlapResult overlapResult = project.addTask(task1, false);
+        assertThat(overlapResult.isOverlap()).isFalse();
+        assertThat(project.getTasks()).contains(task1);
+
+        overlapResult = project.addTask(task2, false);
+        assertThat(overlapResult.isOverlap()).isFalse();
+        assertThat(project.getTasks()).contains(task1, task2);
+    }
+
     
+
 }
