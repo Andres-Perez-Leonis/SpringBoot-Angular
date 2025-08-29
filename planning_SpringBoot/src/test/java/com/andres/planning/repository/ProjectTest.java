@@ -3,8 +3,10 @@ package com.andres.planning.repository;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.config.Task;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import com.andres.planning.model.ProjectEntity;
@@ -19,9 +21,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Sql(scripts = "/clean-data.sql")
+@ActiveProfiles("test")
 public class ProjectTest {
 
+    @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
     private TaskRepository taskRepository;
 
     @Test
