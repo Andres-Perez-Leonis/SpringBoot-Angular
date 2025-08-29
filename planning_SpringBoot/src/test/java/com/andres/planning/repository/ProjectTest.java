@@ -147,4 +147,16 @@ public class ProjectTest {
         assertThat(updatedProject.getCategory()).isEqualTo("Updated Category 1");
     }
 
+    @Test
+    @Transactional
+    public void deleteProjectDB() {
+        LocalDateTime time = LocalDateTime.now();
+        ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
+        projectRepository.save(project);
+
+        projectRepository.delete(project);
+
+        ProjectEntity deletedProject = projectRepository.findById(project.getId()).orElse(null);
+        assertThat(deletedProject).isNull();
+    }
 }
