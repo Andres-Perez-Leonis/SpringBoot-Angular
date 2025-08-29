@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.andres</groupId>
 	<artifactId>planning</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 	<name>planning</name>
 	<description>Planning Web App</description>
