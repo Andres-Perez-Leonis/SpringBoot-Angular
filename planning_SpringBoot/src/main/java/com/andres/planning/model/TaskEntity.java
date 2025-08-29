@@ -10,7 +10,8 @@ import com.andres.planning.model.OverlapResult.OverlapResult;
 
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -18,6 +19,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tasks")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class TaskEntity extends PlanningItemEntity {
 
 
@@ -28,8 +30,8 @@ public class TaskEntity extends PlanningItemEntity {
 
     @ManyToOne
     @Nonnull
-    @JoinColumn(name = "project_id")
-    private Long projectId;
+    @JoinColumn(name = "project")
+    private ProjectEntity project;
 
     @OneToMany(mappedBy = "task")
     Set<SubTaskEntity> subTasks = new HashSet<>();
@@ -69,25 +71,25 @@ public class TaskEntity extends PlanningItemEntity {
             return overlapResult;
         }
 
-        subTask.setTaskID(this.getId());
+        subTask.setTask(this);
         this.subTasks.add(subTask);
         return overlapResult;
     }
 
     public boolean removeSubTask(SubTaskEntity subTask) {
-        subTask.setTaskID(null);
+        subTask.setTask(null);
         return this.subTasks.remove(subTask);
     }
 
 
     // Getters and Setters
 
-    public Long getProjectId() {
-        return projectId;
+    public ProjectEntity getProject() {
+        return project;
     }
 
-    public void setProjectId(Long projectId) {
-        this.projectId = projectId;
+    public void setProject(ProjectEntity project) {
+        this.project = project;
     }
 
     public int getPriority() {
