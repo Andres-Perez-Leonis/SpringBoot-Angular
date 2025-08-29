@@ -128,5 +128,23 @@ public class ProjectTest {
         assertThat(savedProject.getCategory()).isEqualTo("Category 1");
     }
 
+    @Test
+    @Transactional
+    public void updateProjectDB() {
+        LocalDateTime time = LocalDateTime.now();
+        ProjectEntity project = new ProjectEntity("Project 1", "Description for Project 1", time, time.plusDays(7), "Category 1");
+        projectRepository.save(project);
+
+        project.setTitle("Updated Project 1");
+        project.setDescription("Updated Description for Project 1");
+        project.setCategory("Updated Category 1");
+        projectRepository.save(project);
+
+        ProjectEntity updatedProject = projectRepository.findById(project.getId()).orElse(null);
+        assertThat(updatedProject).isNotNull();
+        assertThat(updatedProject.getTitle()).isEqualTo("Updated Project 1");
+        assertThat(updatedProject.getDescription()).isEqualTo("Updated Description for Project 1");
+        assertThat(updatedProject.getCategory()).isEqualTo("Updated Category 1");
+    }
 
 }
