@@ -5,7 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import com.andres.planning.model.SubTaskEntity;
@@ -17,8 +19,13 @@ import jakarta.transaction.Transactional;
 
 @SpringBootTest
 @Sql(scripts = "/clean-data.sql")
+@ActiveProfiles("test")
 public class SubTaskTest {
+
+    @Autowired
     private TaskRepository taskRepository;
+
+    @Autowired
     private SubTaskRepository subTaskRepository;
 
     @Test
@@ -67,10 +74,10 @@ public class SubTaskTest {
                 LocalDateTime.now().plusHours(1), null, 1);
         taskRepository.save(task);
 
-        subTask.setTaskID(task.getId());
+        subTask.setTask(task);
         subTaskRepository.save(subTask);
 
-        assertThat(subTask.getTaskID()).isEqualTo(task.getId());
+        assertThat(subTask.getTask()).isEqualTo(task);
     }
 
     @Test
