@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.lang.NonNull;
+
 import com.andres.planning.model.OverlapResult.OverlapResult;
 
 import jakarta.annotation.Nonnull;
@@ -35,9 +37,10 @@ public class TaskEntity extends PlanningItemEntity {
 
     public TaskEntity() {}
 
-    public TaskEntity(String name, String description, LocalDateTime startTime, LocalDateTime finishTime, String category, int priority) {
+    public TaskEntity(@NonNull String name, String description, Boolean completed, @Nonnull LocalDateTime startTime, @Nonnull LocalDateTime finishTime, String category, int priority) {
         super(name, description, startTime, finishTime, category);
         this.priority = priority;
+        this.completed = completed != null ? completed : false;
     }
 
     //Methods
