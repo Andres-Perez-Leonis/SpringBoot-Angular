@@ -5,14 +5,14 @@ import java.time.LocalDateTime;
 
 import io.micrometer.common.lang.NonNull;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
-@Entity
+@MappedSuperclass
 public abstract class PlanningItemEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
