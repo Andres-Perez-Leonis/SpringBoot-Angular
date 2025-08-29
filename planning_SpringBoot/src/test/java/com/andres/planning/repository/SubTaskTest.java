@@ -9,13 +9,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import com.andres.planning.model.SubTaskEntity;
+import com.andres.planning.model.TaskEntity;
 import com.andres.planning.repository.SubTask.SubTaskRepository;
+import com.andres.planning.repository.Task.TaskRepository;
 
 import jakarta.transaction.Transactional;
 
 @SpringBootTest
 @Sql(scripts = "/clean-data.sql")
 public class SubTaskTest {
+    private TaskRepository taskRepository;
     private SubTaskRepository subTaskRepository;
 
     @Test
@@ -51,6 +54,23 @@ public class SubTaskTest {
         subTaskRepository.save(subTask);
         subTaskRepository.delete(subTask);
         assertThat(subTaskRepository.findById(subTask.getId())).isEmpty();
+    }
+
+    @Test
+    public void SubTaskAssigned() {
+        // Create a SubTask and Assign to a Task
+        SubTaskEntity subTask = new SubTaskEntity("SubTask 1", "Description for SubTask 1", false, 1,
+                LocalDateTime.now(), LocalDateTime.now().plusMinutes(30));
+        subTaskRepository.save(subTask);
+
+        TaskEntity task = new TaskEntity("Task 1", "Description for Task 1", false, LocalDateTime.now(),
+                LocalDateTime.now().plusHours(1), null, 1);
+        taskRepository.save(task);
+
+        subTask.setTaskID(task.getId());
+        subTaskRepository.save(subTask);
+
+        assertThat(subTask.getTaskID()).isEqualTo(task.getId());
     }
 
     @Test
