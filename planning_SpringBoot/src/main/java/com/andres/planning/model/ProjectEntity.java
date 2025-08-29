@@ -29,7 +29,7 @@ public class ProjectEntity extends PlanningItemEntity {
 
     public OverlapResult addTask(TaskEntity task, boolean notify) {
         OverlapResult overlapResult = overlapsWith(task);
-        if (overlapResult.isOverlap() && notify) {
+        if (overlapResult.isOverlap() && !notify) {
             // Notify user about overlap
             return overlapResult;
         }
