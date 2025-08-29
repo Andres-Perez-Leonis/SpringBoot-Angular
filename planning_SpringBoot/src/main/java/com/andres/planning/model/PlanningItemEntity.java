@@ -26,13 +26,13 @@ public abstract class PlanningItemEntity implements Serializable {
 
     @NonNull
     @Column(name = "start_time")
-    @Temporal(TemporalType.DATE)
+    //@Temporal(TemporalType.DATE)
     private LocalDateTime startTime;
 
 
     @NonNull
     @Column(name = "finish_time")
-    @Temporal(TemporalType.DATE)
+    //@Temporal(TemporalType.DATE)
     private LocalDateTime finishTime;
 
 
